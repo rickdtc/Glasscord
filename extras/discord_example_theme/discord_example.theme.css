@@ -217,6 +217,10 @@
 
 /* USRBG compatibility end */
 
+body{
+    background-color: transparent;
+}
+
 #app-mount{
 	background-color: transparent;
 	border-radius: var(--glasscord-blur-corner-radius);
@@ -242,7 +246,13 @@
 	--background-emoji: #2f3136ff;
 	--text-lights-out: #f0f0f0;
 	--background-titlebar: #2f313650;
+    --scrollbar-auto-thumb: #20222550;
 }
+
+.auto-Ge5KZx::-webkit-scrollbar-track{
+    background-color: transparent;
+}
+
 
 .theme-dark .scrollerThemed-2oenus.themedWithTrack-q8E3vB .scroller-2FKFPG::-webkit-scrollbar-track-piece {
 	background-color: transparent;
@@ -436,7 +446,7 @@
 	background-color: var(--background-attachments) !important;
 }
 
-.header-2o-2hj {
+.header-2V-4Sw {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
@@ -451,6 +461,10 @@
 
 .container-PNkimc {
 	background-color: transparent;
+}
+
+.container-3w7J-x {
+    background-color: transparent;
 }
 
 .inset-3sAvek {
