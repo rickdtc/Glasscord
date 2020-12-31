@@ -3,6 +3,8 @@
 Support for it will cease to exist on March 1, 2021. It's been fun but it's about time I move on.
 Forks and pull requests are totally welcome in the future though!
 
+Check out [this wiki page](https://github.com/AryToNeX/Glasscord/wiki/My-last-wishes-for-this-project.) if you're willing to fork or make derived projects.
+
 # ![Glasscord](images/glasscord_banner.svg)
 Providing composition effects to Electron applications.
 
