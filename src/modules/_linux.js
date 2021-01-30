@@ -24,11 +24,11 @@ module.exports = class Linux extends Module{
 	cssProps = ["--glasscord-linux-blur", "--glasscord-gnome-sigma", "--glasscord-blur-corner-radius"];
 	
 	// eslint-disable-next-line class-methods-use-this
-	update(win, cssProp, value){
+	async update(win, cssProp, value){
 		switch(cssProp){
 			case "--glasscord-linux-blur":
 				value = (typeof value === "string" && value.toLowerCase() === "true");
-				win.setBlur(value);
+				await win.setBlur(value);
 				break;
 			case "--glasscord-gnome-sigma":
 				if(typeof win.blurGnomeSigma === "undefined") break;

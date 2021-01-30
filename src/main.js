@@ -162,7 +162,7 @@ module.exports = class Main{
 		for(let moduleName in this.modules){
 			if(this.modules[moduleName].cssProps && this.modules[moduleName].cssProps.length !== 0){
 				for(let prop of this.modules[moduleName].cssProps)
-					promises.push(this.constructor._getCssProp(win.webContents, prop).then(value => this.modules[moduleName].update(win, prop, value)));
+					promises.push(this.constructor._getCssProp(win.webContents, prop).then(async value => await this.modules[moduleName].update(win, prop, value)));
 				
 			}
 		}
@@ -217,16 +217,17 @@ module.exports = class Main{
 	static _getCssProp(webContents, propName){
 		return this._executeInRenderer(webContents,
 			// RENDERER CODE BEGIN
-			(propName)=> {
+			(propName) => {
 				// eslint-disable-next-line no-undef
 				let flag = getComputedStyle(document.documentElement).getPropertyValue(propName);
 				if(flag) return flag.trim().replace("\"","");
 			}
 			// RENDERER CODE END
-			, propName).then(res => {
-			if(res) return res;
-			return null;
-		});
+			, propName)
+			.then(res => {
+				if(res) return res;
+				return null;
+			});
 	}
 	
 	// stolen from zack senpai
