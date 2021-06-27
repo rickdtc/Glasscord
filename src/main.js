@@ -30,9 +30,8 @@ module.exports = class Main{
 		this.appConfig = this._appConfigObj.config;
 		
 		// Let's read our modules now
-		this._loadInternalModules();
-		this._loadExternalModules();
-		
+		this._loadModules(path.resolve(__dirname, "modules"));
+
 		// This is a Singleton
 		Main.prototype._instance = this;
 	}
@@ -44,25 +43,11 @@ module.exports = class Main{
 	}
 	
 	getModule(name){
-		const parsedName = this._getModuleFilePath(name);
-		if(typeof parsedName !== "undefined"){ // it was a file indeed
-			try{
-				let module = require(parsedName);
-				name = module.prototype.constructor.name;
-			}catch(e){
-				return undefined;
-			}
-		}
-
 		return this.modules[name] || undefined;
 	}
 	
 	loadModule(moduleFile){
-		let parsedFile = this._getModuleFilePath(moduleFile);
-		if(typeof parsedFile === "undefined") return false; // file is not JS
-		if(!fs.existsSync(parsedFile)) return false; // file does not exist
-
-		let module = require(parsedFile);
+		let module = require(moduleFile);
 		if(module.isApplicable()){
 
 			if(!module.isCore) // The module is not core
@@ -81,38 +66,22 @@ module.exports = class Main{
 	}
 
 	unloadModule(module){
+		if (typeof module === "undefined") return false;
 		if(typeof module === "string") module = this.getModule(module);
-		if(typeof module === "undefined") return false;
 		if(module.constructor.isCore) return false;
-		for(let _mod in this.modules){
-			if(this.modules[_mod] === module){
-				this.modules[_mod].unload();
-				delete this.modules[_mod];
-				return true;
-			}
+
+		const key = Object.keys(this.modules).find(key => this.modules[key] === module)
+
+		if(key){
+			this.modules[key].unload();
+			delete this.modules[key];
+			return true;
 		}
+
 		return false;
 	}
 	
 	// Methods for private use -- don't call them from outside, please
-	
-	// eslint-disable-next-line class-methods-use-this
-	_getModuleFilePath(moduleFile){
-		let parsedFile = path.parse(moduleFile);
-		if(parsedFile.ext === ".js" || parsedFile.ext === ".asar" || parsedFile.ext === ".module"){
-			// we got a js/asar filename or a .module folder name
-			if(parsedFile.root === "" && parsedFile.dir === "" && !fs.existsSync(parsedFile.base)){
-				if(fs.readdirSync(path.resolve(__dirname, "modules")).includes(parsedFile.base))
-					// we might be referring to an internal module!
-					return path.resolve(__dirname, "modules", parsedFile.base);
-				else if(fs.readdirSync(path.resolve(Utils.getSavePath(), "_modules")).includes(parsedFile.base))
-					// we might be referring to an external module!
-					return path.resolve(Utils.getSavePath(), "_modules", parsedFile.base);
-			}else
-				return path.resolve(moduleFile);
-		}
-		return undefined;
-	}
 	
 	/**
 	 * This is the event listener. Every fired event gets listened here.
@@ -127,27 +96,12 @@ module.exports = class Main{
 		});
 		// Everything else can be controlled via CSS styling
 	}
-	
-	_loadInternalModules(){
-		return this._loadModules(path.resolve(__dirname, "modules"));
-	}
-	
-	_loadExternalModules(){
-		// ensure the modules directory exists
-		try{
-			fs.ensureDirSync(path.resolve(Utils.getSavePath(), "_modules"));
-		}catch(e){
-			// Nothing!
-		}
 
-		return this._loadModules(path.resolve(Utils.getSavePath(), "_modules"));
-	}
-	
 	_loadModules(modulePath){
 		if(typeof this.modules === "undefined")
 			this.modules = {};
 		
-		for(let file of fs.readdirSync(modulePath))
+		for(let file of fs.readdirSync(modulePath).filter(x => ![".", ".."].includes(x)))
 			this.loadModule(path.resolve(modulePath, file));
 	}
 

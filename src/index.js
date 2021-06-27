@@ -35,12 +35,6 @@ Utils.copyBundledConfiguration();
 // Require our version checker
 require("./version_check.js")();
 
-// Inject the GlasscordApi module for third party communication (on Main)
-injectGlasscordNodeModule();
-
-// Require the featured modules downloader
-require("./featured_modules.js")();
-
 // Init main
 Main.getInstance();
 
@@ -90,14 +84,6 @@ function injectFromResources(){
 	electron.app.setAppPath(basePath);
 	electron.app.name = pkg.name;
 	Module._load(path.join(basePath, pkg.main), null, true);
-}
-
-function injectGlasscordNodeModule(){
-	const oldResolveFilename = Module._resolveFilename;
-	Module._resolveFilename = (request, parentModule, isMain, options) => {
-		if(request === "glasscord") request = path.resolve(__dirname, "api.js");
-		return oldResolveFilename.call(this, request, parentModule, isMain, options);
-	};
 }
 
 function delayReadyEvent(milliseconds){ // from Zack, blame Electron
